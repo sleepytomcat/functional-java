@@ -1,0 +1,1 @@
+Exploring the book "Functional Programming in Java: How functional techniques improve your Java programs" by Pierre-Yves Saumont.

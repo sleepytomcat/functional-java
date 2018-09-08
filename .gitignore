@@ -1,2 +1,9 @@
+# Gradle files
 .gradle
+
+# build output
 /build/
+
+# IntelliJ Idea files
+.idea
+*.iml
