@@ -24,5 +24,5 @@ dependencies {
 }
 
 // Define the main class for the application
-mainClassName = 'chapter02.exercise04'
+mainClassName = 'chapter02.exercise05'
 
