@@ -11,6 +11,7 @@ public class exercise05 {
 		System.out.println(composed.apply(3)); // expected: true
 	}
 
+	// in Java there's no way to declare 'polymorphic' field, so we're using a trick with static method
 	static <U, V, R> Function<Function<V, R>, Function<Function<U, V>, Function<U, R>>> compose() {
 		return f -> g -> x -> f.apply(g.apply(x));
 	}
