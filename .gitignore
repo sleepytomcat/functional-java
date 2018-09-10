@@ -3,6 +3,7 @@
 
 # build output
 /build/
+/out/
 
 # IntelliJ Idea files
 .idea
