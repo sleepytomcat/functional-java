@@ -2,16 +2,18 @@ package chapter02;
 
 import java.util.function.Function;
 
-public class exercise08 {
+public class exercise09 {
 	public static void main(String[] args) {
-		Function<Integer, Function<Double, String>> partial = x -> y -> x.toString() + y.toString();
-		Function<Integer, String> partiallyApplied = partialApply(-101.0101, partial);
+		Function<String, Function<String, Function<String, Function<String, String>>>>
+				func = a -> b -> c -> d -> String.format("%s, %s, %s, %s", a, b, c, d);
 
-		System.out.println(partiallyApplied.apply(3)); // expected: "3-101.0101"
+		System.out.println(method("a", "b", "c", "d"));
+		System.out.println(func.apply("a").apply("b").apply("c").apply("d"));
 	}
 
-	// in Java there's no way to declare 'polymorphic' field, so we're using a trick with static method
-	static <A, B, C> Function<A, C> partialApply(B b, Function<A, Function <B, C>> f) {
-		return a -> f.apply(a).apply(b);
+	static <A, B, C, D> String method(A a, B b, C c, D d) {
+		return String.format("%s, %s, %s, %s", a, b, c, d);
 	}
 }
+
+
