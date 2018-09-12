@@ -23,6 +23,10 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
+compileJava {
+    options.compilerArgs << '-Xlint:unchecked'
+}
+
 // Define the main class for the application
-mainClassName = 'chapter03.exercise01'
+mainClassName = 'chapter03.exercise02'
 
