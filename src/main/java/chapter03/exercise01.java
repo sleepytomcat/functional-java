@@ -38,22 +38,21 @@ public class exercise01 {
 	}
 
 	interface Result<T> {
-		void bind(Effect<T> success, Effect<T> failure);
+		void bind(Effect<T> success, Effect<String> failure);
 
-		static <T> Result<T> failure(T message) {return new Failure<T>(message);}
+		static Result<String> failure(String message) {return new Failure<String>(message);}
 		static <T> Result<T> success(T email) {return new Success<T>(email);}
 
 		class Success<T> implements Result<T>{
 			public Success(T email) {this.email = email;}
-			public void bind(Effect<T> success, Effect<T> failure) {success.apply(email);}
+			public void bind(Effect<T> success, Effect<String> failure) {success.apply(email);}
 			T email;
 		};
 
 		class Failure<T> implements Result<T> {
-			private final T errorMessage;
-			public Failure(T errorMessage) {this.errorMessage = errorMessage;}
-			public void bind(Effect<T> success, Effect<T> failure) {failure.apply(errorMessage);
-			}
+			private final String errorMessage;
+			public Failure(String errorMessage) {this.errorMessage = errorMessage;}
+			public void bind(Effect<T> success, Effect<String> failure) {failure.apply(errorMessage);}
 		}
 	}
 

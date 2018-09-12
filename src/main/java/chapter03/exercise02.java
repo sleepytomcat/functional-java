@@ -25,14 +25,14 @@ public class exercise02 {
 	}
 
 	interface Result<T> {
-		void bind(Effect<T> success, Effect<T> failure);
+		void bind(Effect<T> success, Effect<String> failure);
 
 		static Result<String> failure(String message) {return new Failure(message);}
 		static <T> Result<T> success(T value) {return new Success<T>(value);}
 
 		class Success<T> implements Result<T>{
 			public Success(T value) {this.value = value;}
-			public void bind(Effect<T> successEffect, Effect<T> failureEffect) {successEffect.apply(value);}
+			public void bind(Effect<T> successEffect, Effect<String> failureEffect) {successEffect.apply(value);}
 			T value;
 		};
 
