@@ -8,11 +8,14 @@ public class exercise01 {
 	static Function<String, Result> emailChecker = s -> {
 		if (s == null) {
 			return Result.failure("email must not be null");
-		} else if (s.length() == 0) {
+		}
+		else if (s.length() == 0) {
 			return Result.failure("email must not be empty");
-		} else if (emailPattern.matcher(s).matches()) {
+		}
+		else if (emailPattern.matcher(s).matches()) {
 			return Result.success(s);
-		} else {
+		}
+		else {
 			return Result.failure("email " + s + " is invalid.");
 		}
 	};
@@ -55,6 +58,7 @@ interface Result<T> {
 	}
 }
 
+@FunctionalInterface
 interface Effect<T> {
 	void apply(T t);
 }
