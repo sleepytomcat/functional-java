@@ -6,10 +6,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-public class exercise07 {
+public class exercise08 {
 	public static void main(String... args) {
 		List<Integer> list = list(1,2,3,4,5);
-		System.out.println(exercise07.<Integer, String>foldRight("0", list, x -> y -> addIS(x, y)));
+		System.out.println(exercise08.foldRight("0", list, x -> y -> addIS(x, y)));
 	}
 
 	@SafeVarargs
@@ -28,7 +28,7 @@ public class exercise07 {
 		if (src.size() == 0)
 			throw new IllegalStateException("tail of empty list");
 		else
-			return exercise07.<T>copy(src.subList(1, src.size()));
+			return exercise08.<T>copy(src.subList(1, src.size()));
 	}
 
 	private static <T> List<T> copy(List<T> src) {
@@ -40,10 +40,8 @@ public class exercise07 {
 	}
 
 	public static <T,U> U foldRight(U identityElement, List<T> list, final Function<T, Function<U, U>> foldingFunction) {
-		U result = identityElement;
-		for (int i = list.size()-1; i >= 0; i--) {
-			result = foldingFunction.apply(list.get(i)).apply(result);
-		}
-		return result;
+		return list.isEmpty()
+				? identityElement
+				: foldingFunction.apply(head(list)).apply(foldRight(identityElement, tail(list), foldingFunction));
 	}
 }
