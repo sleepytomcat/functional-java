@@ -9,7 +9,7 @@ import java.util.function.Function;
 public class exercise06 {
 	public static void main(String... args) {
 		List<Integer> list = list(1,2,3,4,5);
-		System.out.println(exercise06.<Integer, String>foldLeft("", list, x -> y -> x.toString() + "-" + y.toString()));
+		System.out.println(exercise06.<Integer, String>foldLeft("0", list, x -> y -> addSI(x, y)));
 	}
 
 	@SafeVarargs
@@ -33,6 +33,10 @@ public class exercise06 {
 
 	private static <T> List<T> copy(List<T> src) {
 		return new ArrayList<T>(src);
+	}
+
+	static String addSI(String s, Integer i) {
+		return "(" + s + " + " + i + ")";
 	}
 
 	public static <T,U> U foldLeft(U identityElement, List<T> list, final Function<U, Function<T, U>> foldingFunction) {
