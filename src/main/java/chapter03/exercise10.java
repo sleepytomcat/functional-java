@@ -6,12 +6,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-public class exercise09 {
+public class exercise10 {
 	public static void main(String... args) {
 		List<Integer> list = list(1,2,3,4,5);
 		System.out.println(list);
-		System.out.println(reverseWithFoldLeft(list));
-		System.out.println(reverseWithFoldRight(list));
+		System.out.println(mapWithFoldLeft(list, x -> "'" + x.toString() + "'"));
+		System.out.println(mapWithFoldRight(list, x -> "'" + x.toString() + "'"));
 	}
 
 	@SafeVarargs
@@ -56,17 +56,17 @@ public class exercise09 {
 		return result;
 	}
 
+	public static <T,U> List<U> mapWithFoldLeft(List<T> list, Function<T,U> mapping) {
+		return foldLeft(list(), list, x -> y -> append(mapping.apply(y), x));
+	}
+
 	public static <T,U> U foldRight(U identityElement, List<T> list, final Function<T, Function<U, U>> foldingFunction) {
 		return list.isEmpty()
 				? identityElement
 				: foldingFunction.apply(head(list)).apply(foldRight(identityElement, tail(list), foldingFunction));
 	}
 
-	public static <T> List<T> reverseWithFoldLeft(List<T> list) {
-		return foldLeft(list(), list, x -> y -> prepend(y, x));
-	}
-
-	public static <T> List<T> reverseWithFoldRight(List<T> list) {
-		return foldRight(list(), list, x -> y -> append(x, y));
+	public static <T,U> List<U> mapWithFoldRight(List<T> list, Function<T,U> mapping) {
+		return foldRight(list(), list, x -> y -> prepend(mapping.apply(x), y));
 	}
 }
