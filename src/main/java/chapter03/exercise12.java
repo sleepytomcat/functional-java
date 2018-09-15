@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
-public class exercise11 {
+public class exercise12 {
 	public static void main(String... args) {
-		List<Integer> list = range(3,7);
+		List<String> list = unfold("a", text -> text + "a", text -> text.length() < 5);
 		System.out.println(list);
 	}
 
@@ -26,12 +27,12 @@ public class exercise11 {
 		return new ArrayList<>(src);
 	}
 
-	public static List<Integer> range(int start, int end) {
-		List<Integer> result = list();
-		int current = start;
-		while (current < end) {
+	public static <T> List<T> unfold(T seed, Function<T,T> next, Function<T, Boolean> continueCondition) {
+		List<T> result = list();
+		T current = seed;
+		while (continueCondition.apply(current)) {
 			result = append(current, result);
-			current++;
+			current = next.apply(current);
 		}
 		return result;
 	}
