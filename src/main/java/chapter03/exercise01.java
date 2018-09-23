@@ -47,7 +47,7 @@ public class exercise01 {
 			public Success(T email) {this.email = email;}
 			public void bind(Effect<T> success, Effect<String> failure) {success.apply(email);}
 			T email;
-		};
+		}
 
 		class Failure<T> implements Result<T> {
 			private final String errorMessage;

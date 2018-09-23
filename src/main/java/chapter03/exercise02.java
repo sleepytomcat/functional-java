@@ -34,7 +34,7 @@ public class exercise02 {
 			public Success(T value) {this.value = value;}
 			public void bind(Effect<T> successEffect, Effect<String> failureEffect) {successEffect.apply(value);}
 			T value;
-		};
+		}
 
 		class Failure implements Result<String> {
 			private final String errorMessage;

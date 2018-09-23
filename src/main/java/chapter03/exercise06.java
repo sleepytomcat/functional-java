@@ -9,7 +9,7 @@ import java.util.function.Function;
 public class exercise06 {
 	public static void main(String... args) {
 		List<Integer> list = list(1,2,3,4,5);
-		System.out.println(exercise06.<Integer, String>foldLeft("0", list, x -> y -> addSI(x, y)));
+		System.out.println(exercise06.foldLeft("0", list, x -> y -> addSI(x, y)));
 	}
 
 	@SafeVarargs
@@ -28,7 +28,7 @@ public class exercise06 {
 		if (src.size() == 0)
 			throw new IllegalStateException("tail of empty list");
 		else
-			return exercise06.<T>copy(src.subList(1, src.size()));
+			return exercise06.copy(src.subList(1, src.size()));
 	}
 
 	private static <T> List<T> copy(List<T> src) {

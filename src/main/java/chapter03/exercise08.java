@@ -28,7 +28,7 @@ public class exercise08 {
 		if (src.size() == 0)
 			throw new IllegalStateException("tail of empty list");
 		else
-			return exercise08.<T>copy(src.subList(1, src.size()));
+			return exercise08.copy(src.subList(1, src.size()));
 	}
 
 	private static <T> List<T> copy(List<T> src) {
