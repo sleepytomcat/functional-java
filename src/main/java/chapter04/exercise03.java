@@ -6,16 +6,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class exercise03 {
 	public static void main(String... args) {
-		List<Integer> list = list(1,3,5,7,9);
-		System.out.println(foldLeft(0, list, x -> y -> y + x));
-
-		TailCall<Integer> tc = foldLeftWithTailCall(0, list, x -> y -> y + x);
-		while (tc.isSuspended())
-			tc = tc.resume();
-		System.out.println(tc.eval());
+		List<Integer> list = IntStream.range(0, 100000).boxed().map(__ -> 1).collect(Collectors.toList());
+		System.out.println(foldLeftWithTailCall(0, list, x -> y -> y + x).eval());
 	}
 
 	@SafeVarargs
@@ -41,18 +38,11 @@ public class exercise03 {
 		return new ArrayList<>(src);
 	}
 
-	public static <T,U> U foldLeft(U accumulator, List<T> list, final Function<U, Function<T, U>> foldingFunction) {
-		if (list.size() == 0)
-			return accumulator;
-		else
-			return foldLeft(foldingFunction.apply(accumulator).apply(head(list)), tail(list), foldingFunction);
-	}
-
 	public static <T,U> TailCall<U> foldLeftWithTailCall(U accumulator, List<T> list, final Function<U, Function<T, U>> foldingFunction) {
 		if (list.size() == 0)
 			return TailCall.ret(accumulator);
 		else
-			return foldLeftWithTailCall(foldingFunction.apply(accumulator).apply(head(list)), tail(list), foldingFunction);
+			return TailCall.sus(() -> foldLeftWithTailCall(foldingFunction.apply(accumulator).apply(head(list)), tail(list), foldingFunction));
 	}
 
 	interface TailCall<T> {
@@ -90,6 +80,4 @@ public class exercise03 {
 
 		private Supplier<TailCall<T>> supplier;
 	}
-
 }
-
