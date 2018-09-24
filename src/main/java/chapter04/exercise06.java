@@ -9,9 +9,7 @@ import java.util.function.Supplier;
 
 public class exercise06 {
 	public static void main(String... args) {
-		List<Function<Integer, Integer>> functions = new ArrayList<>();
-		for (int x = 0; x < 1000; x++)
-			functions.add(m -> m+1);
+		List<Function<Integer, Integer>> functions = list(x->x+1, x->x*2, x->x*3);
 
 		Function<Integer, Integer> combined = composeAll(functions);
 		System.out.println(combined.apply(0));
