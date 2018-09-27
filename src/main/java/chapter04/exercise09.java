@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 public class exercise09 {
 	public static void main(String... args) {
-		System.out.println(fibonacci(5));
+		System.out.println(fibonacci(100_000));
 	}
 
 	public static String fibonacci(int num) {
