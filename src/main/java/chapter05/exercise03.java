@@ -2,8 +2,10 @@ package chapter05;
 
 public class exercise03 {
 	public static void main(String... args) {
-		List<Integer> list = List.list(1, 2);
-		List<Integer> replaced = List.setHead(123, list);
+		List<Integer> emptyList = List.list();
+		List<Integer> nonEmptyList = List.list(1, 2);
+		System.out.println(emptyList);
+		System.out.println(nonEmptyList);
 	}
 
 	static abstract class List<T> {
@@ -28,6 +30,11 @@ public class exercise03 {
 
 			public List<T> setHead(T newHead) {
 				throw new IllegalStateException("setHead called on empty list");
+			}
+
+			@Override
+			public String toString() {
+				return "[NIL]";
 			}
 		}
 
@@ -55,6 +62,18 @@ public class exercise03 {
 
 			private T head;
 			private List<T> tail;
+
+			@Override
+			public String toString() {
+				return toString("", this).eval();
+			}
+
+			private static <T> TailCall<String> toString(String accumulator, List<T> list) {
+				if (list.isEmpty())
+					return TailCall.ret("[" + accumulator +" NIL]");
+				else
+					return TailCall.sus(() -> toString(accumulator + list.head() + ", ", list.tail()));
+			}
 		}
 
 		@SuppressWarnings("unchecked")
@@ -69,13 +88,6 @@ public class exercise03 {
 				n = new Cons<>(a[i], n);
 			}
 			return n;
-		}
-
-		static <T> List<T> cons(T element, List<T> list) {
-			return new Cons<>(element, list);
-		}
-		static <T> List<T> setHead(T newHead, List<T> list) {
-			return list.setHead(newHead);
 		}
 	}
 }
