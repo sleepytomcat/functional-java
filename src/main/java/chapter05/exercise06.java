@@ -1,11 +1,10 @@
 package chapter05;
 
-import java.util.function.Function;
-
-public class exercise05 {
+public class exercise06 {
 	public static void main(String... args) {
-		List<Integer> list = List.list(1, 2, 3, 5);
-		System.out.println(list.dropWhile(x -> x < 5));
+		List<Integer> list = List.list(1, 2, 3);
+		System.out.println(list.reverse());
+		System.out.println(list.dropLast());
 	}
 
 	static abstract class List<T> {
@@ -13,7 +12,9 @@ public class exercise05 {
 		public abstract List<T> tail();
 		public abstract boolean isEmpty();
 		public abstract List<T> setHead(T newHead);
-		public abstract List<T> dropWhile(Function<T, Boolean> predicate);
+		public abstract List<T> dropLast();
+		public abstract List<T> reverse();
+
 		public static final List NIL = new Nil();
 		private List() {}
 		private static class Nil<T> extends List<T> {
@@ -38,8 +39,19 @@ public class exercise05 {
 				return "[NIL]";
 			}
 
-			public List<T> dropWhile(Function<T, Boolean> predicate) {
-				return this;
+			public List<T> dropLast() {
+				throw new IllegalStateException("dropLast() called on empty list");
+			}
+
+			public List<T> reverse() {
+				return reverse(list(), this).eval();
+			}
+
+			private static <T> TailCall<List<T>> reverse(List<T> accumulator, List<T> list) {
+				if (list.isEmpty())
+					return TailCall.ret(list);
+				else
+					return TailCall.sus(() -> reverse(new Cons<>(list.head(), accumulator), list.tail()));
 			}
 		}
 
@@ -80,17 +92,19 @@ public class exercise05 {
 					return TailCall.sus(() -> toString(accumulator + list.head() + ", ", list.tail()));
 			}
 
-			public List<T> dropWhile(Function<T, Boolean> predicate) {
-				return dropWhile(predicate, this).eval();
+			public List<T> dropLast() {
+				return this.reverse().tail().reverse();
 			}
 
-			private static <T> TailCall<List<T>> dropWhile(Function<T, Boolean> predicate, List<T> list) {
+			public List<T> reverse() {
+				return reverse(list(), this).eval();
+			}
+
+			private static <T> TailCall<List<T>> reverse(List<T> accumulator, List<T> list) {
 				if (list.isEmpty())
-					return TailCall.ret(list);
-				else if (predicate.apply(list.head()))
-					return TailCall.sus(() -> dropWhile(predicate, list.tail()));
+					return TailCall.ret(accumulator);
 				else
-					return TailCall.ret(list);
+					return TailCall.sus(() -> reverse(new Cons<>(list.head(), accumulator), list.tail()));
 			}
 		}
 
