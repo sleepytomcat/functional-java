@@ -2,10 +2,10 @@ package chapter05;
 
 import java.util.function.Function;
 
-public class exercise09 {
+public class exercise10 {
 	public static void main(String... args) {
-		List<Double> list = List.list(1D, 2D, 3D, 4D);
-		System.out.println(foldRight(list, 0D, __ -> y -> y + 1)); // list length
+		List<Double> list = List.list(1D, 2D, 3D, 4D, 5D, 7D);
+		System.out.println(foldLeft(list, 0D, __ -> y -> y + 1)); // list length
 	}
 
 	static abstract class List<T> {
@@ -83,9 +83,13 @@ public class exercise09 {
 		}
 	}
 
-	static <U, V> V foldRight(List<U> list, V identity, Function<U, Function<V, V>> folding) {
+	public static <U, V> V foldLeft(List<U> list, V identity, Function<U, Function<V, V>> folding) {
+		return foldLeft_(list, identity, folding).eval();
+	}
+
+	private static <U, V> TailCall<V> foldLeft_(List<U> list, V accumulator, Function<U, Function<V, V>> folding) {
 		return list.isEmpty()
-				? identity
-				: folding.apply(list.head()).apply(foldRight(list.tail(), identity, folding));
+				? TailCall.ret(accumulator)
+				: TailCall.sus(() -> foldLeft_(list.tail(), folding.apply(list.head()).apply(accumulator), folding));
 	}
 }
