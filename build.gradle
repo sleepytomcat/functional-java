@@ -28,5 +28,5 @@ compileJava {
 }
 
 // Define the main class for the application
-mainClassName = 'chapter05.exercise06'
+mainClassName = 'chapter05.exercise07'
 
