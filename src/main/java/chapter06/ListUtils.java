@@ -9,6 +9,10 @@ public class ListUtils {
 		public abstract boolean isEmpty();
 
 		public static final List NIL = new Nil();
+		public List<T> cons(T head) {
+			return new Cons<>(head, this);
+		}
+
 		private List() {}
 		private static class Nil<T> extends List<T> {
 			public T head() {
@@ -29,7 +33,7 @@ public class ListUtils {
 			}
 		}
 
-		public static class Cons<T> extends List<T> {
+		private static class Cons<T> extends List<T> {
 			private Cons(T head, List<T> tail) {
 				this.head = head;
 				this.tail = tail;
