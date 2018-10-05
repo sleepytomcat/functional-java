@@ -2,18 +2,19 @@ package chapter07;
 
 import java.util.function.Function;
 
-public class exercise01 {
+public class exercise02 {
 	public static void main(String... args) {
 		Either<Throwable, String> value1 = Either.left(new RuntimeException("error!"));
 		Either<Throwable, String> value2 = Either.right("hello, world");
 
-		Function<String, String> mapper = x -> x + "!";
-		System.out.println(value1.map(mapper));
-		System.out.println(value2.map(mapper));
+		Function<String, Either<Throwable, String>> mapper = x -> Either.right(x + "!");
+		System.out.println(value1.flatMap(mapper));
+		System.out.println(value2.flatMap(mapper));
 	}
 
 	static abstract class Either<E, T> {
 		public abstract <U> Either<E, U> map(Function<T, U> f);
+		public abstract <U> Either<E, U> flatMap(Function<T, Either<E, U>> f);
 
 		public static <T, U> Either<T, U> left(T value) {
 			return new Left<>(value);
@@ -34,6 +35,11 @@ public class exercise01 {
 			}
 
 			@Override
+			public <U> Either<E, U> flatMap(Function<T, Either<E, U>> f) {
+				return left(value);
+			}
+
+			@Override
 			public String toString() {
 				return "Left is " + value.toString();
 			}
@@ -49,6 +55,11 @@ public class exercise01 {
 			@Override
 			public <U> Either<E, U> map(Function<T, U> f) {
 				return right(f.apply(value));
+			}
+
+			@Override
+			public <U> Either<E, U> flatMap(Function<T, Either<E, U>> f) {
+				return f.apply(value);
 			}
 
 			@Override
