@@ -4,16 +4,15 @@ import java.io.Serializable;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class exercise06 {
+public class exercise07 {
 	public static void main(String... args) {
 		Result<Integer> failure = Result.failure("some generic error");
 		Result<Integer> empty = Result.empty();
 		Result<Integer> success = Result.success(42);
 
-		System.out.println(failure.exists(x -> x < 42));
-		System.out.println(empty.exists(x -> x < 42));
-		System.out.println(success.exists(x -> x < 42));
-		System.out.println(success.exists(x -> x >= 42));
+		System.out.println(failure.mapFailure("new error message"));
+		System.out.println(empty.mapFailure("new error message"));
+		System.out.println(success.mapFailure("new error message"));
 	}
 
 	static abstract class Result<V> implements Serializable {
@@ -44,6 +43,8 @@ public class exercise06 {
 		public boolean exists(Function<V, Boolean> p) {
 			return map(x -> p.apply(x)).getOrElse(false);
 		}
+
+		public abstract Result<V> mapFailure(String newMessage);
 
 		private static class Failure<V> extends Result<V> {
 			private Failure(String message) {
@@ -84,6 +85,9 @@ public class exercise06 {
 				return result;
 			}
 
+			@Override
+			public Result<V> mapFailure(String newMessage) {return failure(new IllegalStateException(newMessage, exception));}
+
 			private final RuntimeException exception;
 		}
 
@@ -119,6 +123,9 @@ public class exercise06 {
 			@Override
 			public String toString() {return "(Success) " + value.toString();}
 
+			@Override
+			public Result<V> mapFailure(String newMessage) {return this;}
+
 			private final V value;
 		}
 
@@ -131,9 +138,12 @@ public class exercise06 {
 			public <U> Result<U> map(Function<V, U> f) {return empty();}
 			public <U> Result<U> flatMap(Function<V, Result<U>> f) {return empty();};
 			public Result<V> orElse(Supplier<Result<V>> defaultValueSupplier) {return defaultValueSupplier.get();}
+
+			@Override
+			public Result<V> mapFailure(String newMessage) {return this;}
+
 			@Override
 			public String toString() {return "(Empty)";}
-
 		}
 
 		@SuppressWarnings("rawtypes")
