@@ -8,10 +8,8 @@
 
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
-
 // Apply the application plugin to add support for building an application
 apply plugin: 'application'
-
 // In this section you declare where to find the dependencies of your project
 repositories {
     // Use jcenter for resolving your dependencies.
@@ -23,10 +21,9 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
+// Define the main class for the application
+mainClassName = 'chapter08.exercise05'
+
 compileJava {
     options.compilerArgs << '-Xlint:unchecked'
 }
-
-// Define the main class for the application
-mainClassName = 'chapter08.exercise04'
-
