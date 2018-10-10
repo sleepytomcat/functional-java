@@ -4,18 +4,18 @@ import java.io.Serializable;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class exercise02 {
+public class exercise03 {
 	public static void main(String... args) {
-		System.out.println(List.NIL.headOption());
-		System.out.println(List.list(1, 2, 3).headOption());
+		System.out.println(List.NIL.lastOption());
+		System.out.println(List.list(1, 2, 3).lastOption());
 	}
 
 	static abstract class List<T> {
 		public abstract T head();
-		public abstract Result<T> headOption();
 		public abstract List<T> tail();
 		public abstract boolean isEmpty();
 		public abstract long lengthMemoized();
+		public abstract Result<T> headOption();
 		public Result<T> lastOption() {
 			return reverse(this).headOption();
 		}
