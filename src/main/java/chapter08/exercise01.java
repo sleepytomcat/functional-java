@@ -12,6 +12,7 @@ public class exercise01 {
 		public abstract T head();
 		public abstract List<T> tail();
 		public abstract boolean isEmpty();
+		public abstract long length();
 		public abstract long lengthMemoized();
 
 		public static final List NIL = new Nil();
@@ -23,6 +24,7 @@ public class exercise01 {
 			@Override public List<T> tail() {throw new IllegalStateException("tail() called on empty list");}
 			@Override public boolean isEmpty() {return true;}
 			@Override public String toString() {return "[NIL]";}
+			@Override public long length() {return 0;}
 			@Override public long lengthMemoized() {return 0;}
 		}
 
@@ -30,16 +32,15 @@ public class exercise01 {
 			private Cons(T head, List<T> tail) {
 				this.head = head;
 				this.tail = tail;
-				length = tail.isEmpty() ? 1: tail.lengthMemoized() + 1;
+				lengthMemoized = tail.isEmpty() ? 1: tail.length() + 1;
 			}
 
 			@Override public T head() {return head;}
 			@Override public List<T> tail() {return tail;}
 			@Override public boolean isEmpty() {return false;}
-			@Override public String toString() {
-				return toString("", this).eval();
-			}
-			@Override public long lengthMemoized() {return length;}
+			@Override public String toString() {return toString("", this).eval();}
+			@Override public long length() {return foldRight(this, 0, x -> y -> y + 1);}
+			@Override public long lengthMemoized() {return lengthMemoized;}
 
 			private static <T> TailCall<String> toString(String accumulator, List<T> list) {
 				if (list.isEmpty())
@@ -50,7 +51,7 @@ public class exercise01 {
 
 			private T head;
 			private List<T> tail;
-			private long length;
+			private long lengthMemoized;
 		}
 
 		@SuppressWarnings("unchecked")
