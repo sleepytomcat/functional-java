@@ -16,9 +16,7 @@ public class exercise03 {
 		public abstract boolean isEmpty();
 		public abstract long lengthMemoized();
 		public abstract Result<T> headOption();
-		public Result<T> lastOption() {
-			return reverse(this).headOption();
-		}
+		public Result<T> lastOption() {return foldLeft(this, Result.empty(), x -> __ -> Result.success(x));}
 
 		public static final List NIL = new Nil();
 		public List<T> cons(T head) {return new Cons<>(head, this);}
