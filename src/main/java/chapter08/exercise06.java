@@ -4,23 +4,36 @@ import java.io.Serializable;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class exercise02 {
+import static chapter08.exercise06.List.list;
+
+public class exercise06 {
 	public static void main(String... args) {
-		System.out.println(List.NIL.headOption());
-		System.out.println(List.NIL.lastOption());
-		System.out.println(List.list(1, 2, 3).headOption());
-		System.out.println(List.list(1, 2, 3).lastOption());
+		System.out.println(sequence(list()));
+		System.out.println(sequence(list(Result.success(1), Result.success(2))));
+		System.out.println(sequence(list(Result.success(1), Result.empty())));
+		System.out.println(sequence(list(Result.success(1), Result.failure("some failure"))));
+		System.out.println(sequence(list(Result.success(1), Result.empty(), Result.failure("some failure"))));
+	}
+
+	public static <A> Result<List<A>> sequence(List<Result<A>> list) {
+		Function<Result<A>, Function<Result<List<A>>, Result<List<A>>>> transform =
+				(Result<A> next) ->
+						(Result<List<A>> acc) -> acc.flatMap(accLst -> next.map(nextVal -> accLst.cons(nextVal)));
+
+		return foldRight(list, Result.success(List.list()), transform);
+	}
+
+	public static <A> List<A> flattenResult(List<Result<A>> list) {
+		return foldRight(list, list(), x -> y -> x.map(v -> y.cons(v)).getOrElse(() -> y));
 	}
 
 	static abstract class List<T> {
 		public abstract T head();
-		public abstract Result<T> headOption();
 		public abstract List<T> tail();
 		public abstract boolean isEmpty();
 		public abstract long lengthMemoized();
-		public Result<T> lastOption() {
-			return reverse(this).headOption();
-		}
+		public Result<T> headOption() {return foldRight(this, Result.empty(), x -> __ -> Result.success(x));};
+		public Result<T> lastOption() {return foldLeft(this, Result.empty(), x -> __ -> Result.success(x));}
 
 		public static final List NIL = new Nil();
 		public List<T> cons(T head) {return new Cons<>(head, this);}
@@ -78,7 +91,7 @@ public class exercise02 {
 		}
 
 		public static <T> List<T> reverse(List<T> list) {
-			return foldLeft(list, List.list(), head -> accumulator -> new Cons<>(head, accumulator));
+			return foldLeft(list, list(), head -> accumulator -> new Cons<>(head, accumulator));
 		}
 	}
 
@@ -102,26 +115,6 @@ public class exercise02 {
 				: TailCall.sus(() -> foldRight_(list.tail(), folding.apply(list.head()).apply(accumulator), folding));
 	}
 
-	public static <T> List<T> concat(List<T> first, List<T> second) {
-		return foldRight(first, second, secondHead -> accumulatedFirst -> new List.Cons<>(secondHead, accumulatedFirst));
-	}
-
-	public static <T> List<T> flatten(List<List<T>> listOfLists) {
-		return foldLeft(listOfLists, List.list(), x -> y -> concat(y, x));
-	}
-
-	public static <U,V> List<V> map(List<U> list, Function<U,V> mapper) {
-		return foldRight(list, List.list(), x -> y -> new List.Cons<>(mapper.apply(x), y));
-	}
-
-	public static <T> List<T> filter(List<T> list, Function<T,Boolean> predicate) {
-		return flatMap(list, x -> predicate.apply(x) ? List.list(x) : List.list());
-	}
-
-	public static <U,V> List<V> flatMap(List<U> list, Function<U,List<V>> mapper) {
-		return foldRight(list, List.list(), x -> y -> concat(mapper.apply(x), y));
-	}
-
 	static abstract class Result<V> implements Serializable {
 		public static <V> Result<V> failure(String message) {return new Failure<V>(message);}
 		public static <V> Result<V> failure(Exception ex) {return new Failure<V>(ex);} // for checked exceptions
@@ -132,6 +125,8 @@ public class exercise02 {
 
 		public abstract V getOrElse(final V defaultValue);
 		public abstract V getOrElse(final Supplier<V> defaultValueSupplier);
+		public abstract boolean isSuccess();
+		public abstract boolean isFailure();
 
 		public abstract <U> Result<U> map(Function<V, U> f);
 		public abstract <U> Result<U> flatMap(Function<V, Result<U>> f);
@@ -139,16 +134,16 @@ public class exercise02 {
 			return map(x -> this).getOrElse(defaultValueSupplier);
 		}
 
-		public Result<V> filter(Function<V, Boolean> predicate) {
-			return flatMap(x -> predicate.apply(x) ? this : failure("Condition not matched"));
+		public Result<V> filter(Function<V, Boolean> f) {
+			return flatMap(x -> f.apply(x) ? this : failure("Condition not matched"));
 		}
 
-		public Result<V> filter(Function<V, Boolean> predicate, String errorMessage) {
-			return flatMap(x -> predicate.apply(x) ? this : failure(errorMessage));
+		public Result<V> filter(Function<V, Boolean> f, String errorMessage) {
+			return flatMap(x -> f.apply(x) ? this : failure(errorMessage));
 		}
 
-		public boolean exists(Function<V, Boolean> predicate) {
-			return map(x -> predicate.apply(x)).getOrElse(false);
+		public boolean exists(Function<V, Boolean> p) {
+			return map(x -> p.apply(x)).getOrElse(false);
 		}
 
 		public abstract Result<V> mapFailure(String newMessage);
@@ -172,7 +167,7 @@ public class exercise02 {
 						: empty();
 			}
 			catch (Exception ex) {
-				return failure(new IllegalStateException("Did not match predicate", ex));
+				return failure(new IllegalStateException("Did not matched predicate", ex));
 			}
 		}
 
@@ -206,6 +201,11 @@ public class exercise02 {
 				super();
 				this.exception = new IllegalStateException(ex.getMessage(), ex);
 			}
+
+			@Override
+			public boolean isSuccess() {return false;}
+			@Override
+			public boolean isFailure() {return true;}
 
 			@Override
 			public V getOrElse(final V defaultValue) {return defaultValue;}
@@ -249,6 +249,11 @@ public class exercise02 {
 
 		private static class Success<V> extends Result<V> {
 			private Success(V value) {this.value = value;}
+
+			@Override
+			public boolean isSuccess() {return true;}
+			@Override
+			public boolean isFailure() {return false;}
 
 			@Override
 			public V getOrElse(final V defaultValue) {return value;}
@@ -303,7 +308,10 @@ public class exercise02 {
 
 		private static class Empty<V> extends Result<V> {
 			private Empty() {super();}
-
+			@Override
+			public boolean isSuccess() {return false;}
+			@Override
+			public boolean isFailure() {return false;}
 			public V getOrElse(final V defaultValue) {return defaultValue;}
 			public V getOrElse(final Supplier<V> defaultValueSupplier) {return defaultValueSupplier.get();}
 

@@ -32,7 +32,9 @@ public class exercise01 {
 			private Cons(T head, List<T> tail) {
 				this.head = head;
 				this.tail = tail;
-				lengthMemoized = tail.isEmpty() ? 1: tail.length() + 1;
+				lengthMemoized = tail.isEmpty()
+						? 1
+						: tail.length() + 1;
 			}
 
 			@Override public T head() {return head;}
@@ -51,7 +53,7 @@ public class exercise01 {
 
 			private T head;
 			private List<T> tail;
-			private long lengthMemoized;
+			private final long lengthMemoized;
 		}
 
 		@SuppressWarnings("unchecked")

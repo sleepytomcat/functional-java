@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 public class exercise03 {
 	public static void main(String... args) {
 		System.out.println(List.NIL.lastOption());
-		System.out.println(List.list(1, 2, 3).lastOption());
+		System.out.println(List.list(1, 2, 3, 5).lastOption());
 	}
 
 	static abstract class List<T> {

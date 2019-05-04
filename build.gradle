@@ -22,7 +22,7 @@ dependencies {
 }
 
 // Define the main class for the application
-mainClassName = 'chapter08.exercise05'
+mainClassName = 'chapter08.exercise06'
 
 compileJava {
     options.compilerArgs << '-Xlint:unchecked'
